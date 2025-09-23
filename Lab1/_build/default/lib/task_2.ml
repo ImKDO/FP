@@ -1,5 +1,4 @@
-module Task2 = struct
-  module GenerateSeq = struct
+module GenerateSeq = struct
   let first_n_natural_number n = List.init n (fun i -> i + 1)
 end
 
@@ -21,8 +20,7 @@ let rec collatz n acc =
     let len = collatz x 1 in
     if len > max_len then (x,len) 
     else (max_num, max_len)
-    )
-    (0,0) lst
+    ) (1,0) lst
 end
 
 let num = 1_000_000
@@ -34,8 +32,7 @@ let first_n_num_odd = FilteredUintSeq.filtered_seq_odd first_n_num
 let first_n_num_even_collatz = ReduceUintSeq.collatz_seq first_n_num_even
 let first_n_num_odd_collatz = ReduceUintSeq.collatz_seq first_n_num_odd
 
-let abs_max =
+let ans =
   if snd first_n_num_even_collatz > snd first_n_num_odd_collatz
   then fst first_n_num_even_collatz
   else fst first_n_num_odd_collatz
-end

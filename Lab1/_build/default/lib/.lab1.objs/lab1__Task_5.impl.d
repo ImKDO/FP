@@ -1,1 +1,1 @@
-lib/task_5.ml:
+lib/task_5.ml: Seq
