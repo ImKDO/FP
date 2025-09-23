@@ -1,0 +1,14 @@
+let task_1 = Lab1.Task_1.ans
+let () = Printf.printf "Result 1 (tail recursion): %d\n" task_1
+
+let task_2 = Lab1.Task_2.ans
+let () = Printf.printf "Result 2 (regular recursion): %d\n" task_2
+
+let task_3 = Lab1.Task_3.ans
+let () = Printf.printf "Result 3 (modular with fold/filter): %d\n" task_3
+
+let task_4 = Lab1.Task_4.ans 
+let () = Printf.printf "Result 4 (with map): %d\n" task_4
+
+let task_5 = Lab1.Task_5.ans
+let () = Printf.printf "Result 5 (with loops): %d\n" task_5

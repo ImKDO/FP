@@ -1,0 +1,27 @@
+# dune exec ./bin/main.exe
+# OCAMLPARAM: unset
+# Shared cache: enabled-except-user-rules
+# Shared cache location:
+# C:\Users\KDO\AppData\Local\Microsoft\Windows\INetCache\dune\db
+# Workspace root: "C:\\Users\\KDO\\Desktop\\main\\FP\\Lab1\\Task16"
+# Auto-detected concurrency: 16
+# Dune context:
+#  { name = "default"
+#  ; kind = "default"
+#  ; profile = Dev
+#  ; merlin = true
+#  ; fdo_target_exe = None
+#  ; build_dir = In_build_dir "default"
+#  ; instrument_with = []
+#  }
+$ C:\Users\KDO\AppData\Local\opam\default\bin\ocamlc.opt.exe -config > C:\Users\KDO\AppData\Local\Temp\dune_cfe49b_output
+$ (cd _build/default && C:\Users\KDO\AppData\Local\opam\default\bin\ocamldep.opt.exe -modules -impl lib/task_1.ml) > _build/default/lib/.lab1.objs/lab1__Task_1.impl.d
+$ (cd _build/default && C:\Users\KDO\AppData\Local\opam\default\bin\ocamldep.opt.exe -modules -impl lib/task_2.ml) > _build/default/lib/.lab1.objs/lab1__Task_2.impl.d
+$ (cd _build/default && C:\Users\KDO\AppData\Local\opam\default\bin\ocamlc.opt.exe -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -bin-annot-occurrences -I lib/.lab1.objs/byte -I C:\Users\KDO\AppData\Local\opam\default\lib\zarith -no-alias-deps -opaque -open Lab1 -o lib/.lab1.objs/byte/lab1__Task_1.cmo -c -impl lib/task_1.ml)
+$ (cd _build/default && C:\Users\KDO\AppData\Local\opam\default\bin\ocamlc.opt.exe -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -bin-annot-occurrences -I lib/.lab1.objs/byte -I C:\Users\KDO\AppData\Local\opam\default\lib\zarith -no-alias-deps -opaque -open Lab1 -o lib/.lab1.objs/byte/lab1__Task_2.cmo -c -impl lib/task_2.ml)
+$ (cd _build/default && C:\Users\KDO\AppData\Local\opam\default\bin\ocamlc.opt.exe -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -bin-annot-occurrences -I bin/.main.eobjs/byte -I C:\Users\KDO\AppData\Local\opam\default\lib\zarith -I lib/.lab1.objs/byte -no-alias-deps -opaque -o bin/.main.eobjs/byte/dune__exe__Main.cmi -c -intf bin/main.mli)
+$ (cd _build/default && C:\Users\KDO\AppData\Local\opam\default\bin\ocamlopt.opt.exe -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I lib/.lab1.objs/byte -I lib/.lab1.objs/native -I C:\Users\KDO\AppData\Local\opam\default\lib\zarith -cmi-file lib/.lab1.objs/byte/lab1__Task_2.cmi -no-alias-deps -opaque -open Lab1 -o lib/.lab1.objs/native/lab1__Task_2.cmx -c -impl lib/task_2.ml)
+$ (cd _build/default && C:\Users\KDO\AppData\Local\opam\default\bin\ocamlopt.opt.exe -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I lib/.lab1.objs/byte -I lib/.lab1.objs/native -I C:\Users\KDO\AppData\Local\opam\default\lib\zarith -cmi-file lib/.lab1.objs/byte/lab1__Task_1.cmi -no-alias-deps -opaque -open Lab1 -o lib/.lab1.objs/native/lab1__Task_1.cmx -c -impl lib/task_1.ml)
+$ (cd _build/default && C:\Users\KDO\AppData\Local\opam\default\bin\ocamlopt.opt.exe -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I bin/.main.eobjs/byte -I bin/.main.eobjs/native -I C:\Users\KDO\AppData\Local\opam\default\lib\zarith -I lib/.lab1.objs/byte -I lib/.lab1.objs/native -cmi-file bin/.main.eobjs/byte/dune__exe__Main.cmi -no-alias-deps -opaque -o bin/.main.eobjs/native/dune__exe__Main.cmx -c -impl bin/main.ml)
+$ (cd _build/default && C:\Users\KDO\AppData\Local\opam\default\bin\ocamlopt.opt.exe -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -a -o lib/lab1.cmxa lib/.lab1.objs/native/lab1.cmx lib/.lab1.objs/native/lab1__Task_5.cmx lib/.lab1.objs/native/lab1__Task_4.cmx lib/.lab1.objs/native/lab1__Task_3.cmx lib/.lab1.objs/native/lab1__Task_2.cmx lib/.lab1.objs/native/lab1__Task_1.cmx)
+$ (cd _build/default && C:\Users\KDO\AppData\Local\opam\default\bin\ocamlopt.opt.exe -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -o bin/main.exe C:\Users\KDO\AppData\Local\opam\default\lib\zarith\zarith.cmxa -I C:\Users\KDO\AppData\Local\opam\default\lib\zarith lib/lab1.cmxa bin/.main.eobjs/native/dune__exe__Main.cmx)
