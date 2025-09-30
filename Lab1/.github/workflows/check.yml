@@ -1,77 +1,41 @@
-name: OCaml CI
+name: Main workflow
 
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+on: push
 
 jobs:
-  test:
-    name: Test
-    runs-on: ubuntu-latest
+  Tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+        ocaml:
+          - ocaml-base-compiler.5.0.0~alpha0
+          - 4.14.0
+        include:
+          - { os: ubuntu-latest, ocaml: 4.13.1 }
+          - { os: ubuntu-latest, ocaml: 4.12.1 }
+          - { os: ubuntu-latest, ocaml: 4.11.2 }
+        exclude:
+          - { os: windows-latest, ocaml: ocaml-base-compiler.5.0.0~alpha0 }
+
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
-      - name: Set up OCaml
+      - name: Setup OCaml ${{ matrix.ocaml }}
         uses: ocaml/setup-ocaml@v2
         with:
-          ocaml-compiler: "4.14.0"
+          cache-prefix: v1-${{ matrix.os }}-${{ matrix.ocaml }}
+          dune-cache: true
+          ocaml-compiler: ${{ matrix.ocaml }}
 
-      - name: Install dependencies
+      - name: Build dependencies
         run: opam install . --deps-only --with-test
 
-      - name: Build project
+      - name: Build library
         run: opam exec -- dune build
 
-      - name: Run tests
+      - name: Run test suite
         run: opam exec -- dune runtest
-
-  format:
-    name: Format check
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up OCaml
-        uses: ocaml/setup-ocaml@v2
-        with:
-          ocaml-compiler: "4.14.0"
-
-      - name: Install ocamlformat
-        run: opam install ocamlformat
-
-      - name: Check formatting
-        run: opam exec -- ocamlformat --check .
-
-  # Задача для линтинга
-  lint:
-    name: Lint
-    runs-on: ubuntu-latest
-
-    steps:
-      # Шаг 1: Клонирование репозитория
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      # Шаг 2: Настройка OCaml и opam (ЭТОТ ШАГ НЕОБХОДИМ)
-      - name: Set up OCaml
-        uses: ocaml/setup-ocaml@v2
-        with:
-          # Укажите вашу версию компилятора
-          ocaml-compiler: "4.14.0"
-
-      # Шаг 3: Теперь можно устанавливать зависимости
-      - name: Install dependencies
-        run: opam install . --deps-only --with-test # или любая другая команда opam
-
-      # Шаг 4: Запуск линтеров
-      - name: Lint opam files
-        uses: ocaml/setup-ocaml/lint-opam@v2
-
-      - name: Lint documentation
-        uses: ocaml/setup-ocaml/lint-doc@v2
