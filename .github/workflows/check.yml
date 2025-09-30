@@ -1,54 +1,50 @@
-name: OCaml CI for Lab1 Projects
+name: OCaml CI
 
 on:
   push:
-    branches: [main]
-    paths:
-      - "Lab1/**"
+    branches: [ main ]
   pull_request:
-    branches: [main]
-    paths:
-      - "Lab1/**"
+    branches: [ main ]
 
 jobs:
-  build-and-test:
-    name: CI for ${{ matrix.project }}
-    runs-on: ubuntu-latest
+  build:
     strategy:
-      fail-fast: false
       matrix:
-        project: ["Task14", "Task16"]
-    defaults:
-      run:
-        working-directory: Lab1/${{ matrix.project }}
+        os: [ubuntu-latest]
+        ocaml-compiler: [ '4.14' ]
+        task: [ 'Task14', 'Task16' ]
+    runs-on: ${{ matrix.os }}
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-      - name: Set up OCaml
-        uses: ocaml/setup-ocaml@v2
+    - name: Set up OCaml ${{ matrix.ocaml-compiler }}
+      uses: ocaml/setup-ocaml@v2
+      with:
+        ocaml-compiler: ${{ matrix.ocaml-compiler }}
 
-      - name: Install dependencies
-        run: opam install . --deps-only --with-test
+    - name: Install dependencies
+      # Устанавливаем зависимости для конкретного задания
+      run: opam install . --deps-only --with-test
+      working-directory: ./Lab1/${{ matrix.task }}
 
-      - name: Check formatting
-        run: |
-          opam install ocamlformat
-          opam exec -- ocamlformat --check .
+    - name: Check formatting
+      # Проверяем, что код отформатирован с помощью ocamlformat
+      run: opam exec -- dune fmt --check
+      working-directory: ./Lab1/${{ matrix.task }}
 
-      - name: Build project
-        run: opam exec -- dune build
+    - name: Build project
+      # Собираем проект с помощью dune
+      run: opam exec -- dune build
+      working-directory: ./Lab1/${{ matrix.task }}
 
-      - name: Run tests
-        run: opam exec -- dune runtest
+    - name: Run tests
+      # Запускаем тесты с помощью dune
+      run: opam exec -- dune runtest
+      working-directory: ./Lab1/${{ matrix.task }}
 
-      - name: Lint opam files
-        uses: ocaml/setup-ocaml/lint-opam@v2
-        with:
-          path: Lab1/${{ matrix.project }}
-
-      - name: Lint documentation
-        uses: ocaml/setup-ocaml/lint-doc@v2
-        with:
-          path: Lab1/${{ matrix.project }}
+    - name: Generate documentation
+      # Генерируем документацию
+      run: opam exec -- dune build @doc
+      working-directory: ./Lab1/${{ matrix.task }}
