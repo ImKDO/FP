@@ -12,8 +12,10 @@ bug-reports: "https://github.com/username/reponame/issues"
 depends: [
   "ocaml"
   "dune" {>= "3.20"}
-  "ocamlformat" {with-dev-setup}
-  "odoc" {with-doc}
+  "fmt"
+  "alcotest"
+  "ocamlformat"
+  "odoc"
 ]
 build: [
   ["dune" "subst"] {dev}

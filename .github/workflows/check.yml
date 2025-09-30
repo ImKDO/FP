@@ -28,17 +28,17 @@ jobs:
         run: opam install . --deps-only --with-test --with-dev-setup
         working-directory: ./Lab1/${{ matrix.task }}
 
+      - name: Check formatting
+        run: opam exec -- dune fmt
+        working-directory: ./Lab1/${{ matrix.task }}
+
       - name: Build project
-        run: opam exec -- dune build @check
+        run: opam exec -- dune build
         working-directory: ./Lab1/${{ matrix.task }}
 
       - name: Run tests
         # Запускаем тесты с помощью dune
         run: opam exec -- dune runtest
-        working-directory: ./Lab1/${{ matrix.task }}
-
-      - name: Check formatting
-        run: opam exec -- dune fmt
         working-directory: ./Lab1/${{ matrix.task }}
 
       - name: Generate documentation
