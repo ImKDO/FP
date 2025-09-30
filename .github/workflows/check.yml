@@ -11,8 +11,6 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        ocaml-compiler: ["4.14"]
-        # Добавьте сюда все ваши задания
         task: ["Task14", "Task16"]
     runs-on: ${{ matrix.os }}
 
@@ -20,10 +18,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up OCaml ${{ matrix.ocaml-compiler }}
+      - name: Set up OCaml
         uses: ocaml/setup-ocaml@v3
         with:
-          ocaml-compiler: ${{ matrix.ocaml-compiler }}
+          ocaml-compiler:
 
       - name: Install dependencies
         run: opam install . --deps-only --with-test --with-dev-setup
