@@ -25,12 +25,6 @@ jobs:
         with:
           ocaml-compiler: ${{ matrix.ocaml-compiler }}
 
-      # --- НАЧАЛО ИЗМЕНЕНИЙ ---
-      # Добавьте этот шаг для установки системных зависимостей, таких как darcs
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y darcs
       # --- КОНЕЦ ИЗМЕНЕНИЙ ---
       - name: Install dependencies
         # Устанавливаем зависимости для конкретного задания
