@@ -2,58 +2,57 @@ name: OCaml CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        ocaml-compiler: [ '4.14' ]
+        ocaml-compiler: ["4.14"]
         # Добавьте сюда все ваши задания
-        task: [ 'Task14', 'Task16' ]
+        task: ["Task14", "Task16"]
     runs-on: ${{ matrix.os }}
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Set up OCaml ${{ matrix.ocaml-compiler }}
-      uses: ocaml/setup-ocaml@v2
-      with:
-        ocaml-compiler: ${{ matrix.ocaml-compiler }}
+      - name: Set up OCaml ${{ matrix.ocaml-compiler }}
+        uses: ocaml/setup-ocaml@v3
+        with:
+          ocaml-compiler: ${{ matrix.ocaml-compiler }}
 
-    # --- НАЧАЛО ИЗМЕНЕНИЙ ---
-    # Добавьте этот шаг для установки системных зависимостей, таких как darcs
-    - name: Install system dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y darcs
-    # --- КОНЕЦ ИЗМЕНЕНИЙ ---
+      # --- НАЧАЛО ИЗМЕНЕНИЙ ---
+      # Добавьте этот шаг для установки системных зависимостей, таких как darcs
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y darcs
+      # --- КОНЕЦ ИЗМЕНЕНИЙ ---
+      - name: Install dependencies
+        # Устанавливаем зависимости для конкретного задания
+        run: opam install . --deps-only --with-test
+        working-directory: ./Lab1/${{ matrix.task }}
 
-    - name: Install dependencies
-      # Устанавливаем зависимости для конкретного задания
-      run: opam install . --deps-only --with-test
-      working-directory: ./Lab1/${{ matrix.task }}
+      - name: Check formatting
+        # Проверяем, что код отформатирован с помощью ocamlformat
+        run: opam exec -- dune fmt --check
+        working-directory: ./Lab1/${{ matrix.task }}
 
-    - name: Check formatting
-      # Проверяем, что код отформатирован с помощью ocamlformat
-      run: opam exec -- dune fmt --check
-      working-directory: ./Lab1/${{ matrix.task }}
+      - name: Build project
+        # Собираем проект с помощью dune
+        run: opam exec -- dune build
+        working-directory: ./Lab1/${{ matrix.task }}
 
-    - name: Build project
-      # Собираем проект с помощью dune
-      run: opam exec -- dune build
-      working-directory: ./Lab1/${{ matrix.task }}
+      - name: Run tests
+        # Запускаем тесты с помощью dune
+        run: opam exec -- dune runtest
+        working-directory: ./Lab1/${{ matrix.task }}
 
-    - name: Run tests
-      # Запускаем тесты с помощью dune
-      run: opam exec -- dune runtest
-      working-directory: ./Lab1/${{ matrix.task }}
-
-    - name: Generate documentation
-      # Генерируем документацию
-      run: opam exec -- dune build @doc
-      working-directory: ./Lab1/${{ matrix.task }}
+      - name: Generate documentation
+        # Генерируем документацию
+        run: opam exec -- dune build @doc
+        working-directory: ./Lab1/${{ matrix.task }}
