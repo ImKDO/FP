@@ -22,7 +22,10 @@
  (depends 
    ocaml
    dune
-   ocamlformat)
+   ocamlformat
+   zarith
+   alcotest
+   )
  (tags
   ("add topics" "to describe" your project)))
 
