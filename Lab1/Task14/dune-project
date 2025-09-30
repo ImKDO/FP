@@ -23,4 +23,6 @@
  (tags
   ("add topics" "to describe" your project)))
 
+(formatting (enabled_for ocaml))
+
 ; See the complete stanza docs at https://dune.readthedocs.io/en/stable/reference/dune-project/index.html
