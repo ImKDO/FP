@@ -25,19 +25,15 @@ jobs:
         with:
           ocaml-compiler: ${{ matrix.ocaml-compiler }}
 
-      # --- КОНЕЦ ИЗМЕНЕНИЙ ---
       - name: Install dependencies
-        # Устанавливаем зависимости для конкретного задания
-        run: opam install . --deps-only --with-test
+        run: opam install . --deps-only --with-test --with-dev-setup
         working-directory: ./Lab1/${{ matrix.task }}
 
       - name: Check formatting
-        # Проверяем, что код отформатирован с помощью ocamlformat
         run: opam exec -- dune fmt
         working-directory: ./Lab1/${{ matrix.task }}
 
       - name: Build project
-        # Собираем проект с помощью dune
         run: opam exec -- dune build
         working-directory: ./Lab1/${{ matrix.task }}
 
