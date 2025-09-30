@@ -12,6 +12,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         ocaml-compiler: [ '4.14' ]
+        # Добавьте сюда все ваши задания
         task: [ 'Task14', 'Task16' ]
     runs-on: ${{ matrix.os }}
 
@@ -23,6 +24,14 @@ jobs:
       uses: ocaml/setup-ocaml@v2
       with:
         ocaml-compiler: ${{ matrix.ocaml-compiler }}
+
+    # --- НАЧАЛО ИЗМЕНЕНИЙ ---
+    # Добавьте этот шаг для установки системных зависимостей, таких как darcs
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y darcs
+    # --- КОНЕЦ ИЗМЕНЕНИЙ ---
 
     - name: Install dependencies
       # Устанавливаем зависимости для конкретного задания
