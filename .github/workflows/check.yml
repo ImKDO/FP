@@ -11,13 +11,13 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        ocaml-compiler: ["5.3.0"]
+        ocaml-compiler: ["4"]
         task: ["Task14", "Task16"]
     runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v5
 
       - name: Set up OCaml ${{ matrix.ocaml-compiler }}
         uses: ocaml/setup-ocaml@v3
@@ -28,17 +28,17 @@ jobs:
         run: opam install . --deps-only --with-test --with-dev-setup
         working-directory: ./Lab1/${{ matrix.task }}
 
-      - name: Check formatting
-        run: opam exec -- dune fmt
-        working-directory: ./Lab1/${{ matrix.task }}
-
       - name: Build project
-        run: opam exec -- dune build
+        run: opam exec -- dune build @check
         working-directory: ./Lab1/${{ matrix.task }}
 
       - name: Run tests
         # Запускаем тесты с помощью dune
         run: opam exec -- dune runtest
+        working-directory: ./Lab1/${{ matrix.task }}
+
+      - name: Check formatting
+        run: opam exec -- dune fmt
         working-directory: ./Lab1/${{ matrix.task }}
 
       - name: Generate documentation
