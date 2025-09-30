@@ -19,7 +19,10 @@
  (name Task16)
  (synopsis "A short synopsis")
  (description "A longer description")
- (depends ocaml dune (ocamlformat :with-dev-setup))
+ (depends 
+  ocaml 
+  dune 
+  ocamlformat)
  (tags
   ("add topics" "to describe" your project)))
 
