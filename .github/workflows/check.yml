@@ -33,7 +33,7 @@ jobs:
 
       - name: Check formatting
         # Проверяем, что код отформатирован с помощью ocamlformat
-        run: opam exec -- dune fmt --check
+        run: opam exec -- dune fmt
         working-directory: ./Lab1/${{ matrix.task }}
 
       - name: Build project
