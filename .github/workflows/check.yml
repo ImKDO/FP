@@ -1,74 +1,56 @@
 name: OCaml CI for Lab1 Projects
 
-# Запускать рабочий процесс при push или pull request в main,
-# но только если изменения коснулись директории Lab1
 on:
   push:
-    branches: [ main ]
+    branches: [main]
     paths:
-      - 'Lab1/**'
+      - "Lab1/**"
   pull_request:
-    branches: [ main ]
+    branches: [main]
     paths:
-      - 'Lab1/**'
+      - "Lab1/**"
 
 jobs:
   build-and-test:
-    # Имя задачи будет динамически включать имя проекта, например "CI for Task14"
     name: CI for ${{ matrix.project }}
     runs-on: ubuntu-latest
-
-    # Определяем матрицу для запуска задач
     strategy:
-      fail-fast: false # Не отменять другие задачи в матрице, если одна упала
+      fail-fast: false
       matrix:
-        # Укажите здесь имена директорий ваших проектов
-        project: [ 'Task14', 'Task16' ]
-
-    # Устанавливаем рабочую директорию по умолчанию для всех шагов 'run'
-    # Команды будут выполняться из Lab1/Task14 и Lab1/Task16 соответственно
+        project: ["Task14", "Task16"]
     defaults:
       run:
         working-directory: Lab1/${{ matrix.project }}
 
     steps:
-      # 1. Клонируем репозиторий
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2. Настраиваем OCaml
       - name: Set up OCaml
         uses: ocaml/setup-ocaml@v2
         with:
-          # Укажите нужную версию компилятора
-          ocaml-compiler: '4.14.0'
+          ocaml-compiler: "4.14.0"
 
-      # 3. Устанавливаем зависимости (команда запустится в папке проекта)
       - name: Install dependencies
         run: opam install . --deps-only --with-test
 
-      # 4. Проверяем форматирование
       - name: Check formatting
         run: |
           opam install ocamlformat
           opam exec -- ocamlformat --check .
 
-      # 5. Собираем проект
       - name: Build project
         run: opam exec -- dune build
 
-      # 6. Запускаем тесты
       - name: Run tests
         run: opam exec -- dune runtest
 
-      # 7. Линтинг opam-файлов (здесь нужно явно указать путь)
       - name: Lint opam files
         uses: ocaml/setup-ocaml/lint-opam@v2
         with:
-            path: Lab1/${{ matrix.project }}
+          path: Lab1/${{ matrix.project }}
 
-      # 8. Линтинг документации
       - name: Lint documentation
         uses: ocaml/setup-ocaml/lint-doc@v2
         with:
-            path: Lab1/${{ matrix.project }}
+          path: Lab1/${{ matrix.project }}
