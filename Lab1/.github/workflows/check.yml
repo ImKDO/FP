@@ -48,22 +48,28 @@ jobs:
       - name: Check formatting
         run: opam exec -- ocamlformat --check .
 
+  # Задача для линтинга
   lint:
     name: Lint
     runs-on: ubuntu-latest
 
     steps:
+      # Шаг 1: Клонирование репозитория
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # Шаг 2: Настройка OCaml и opam (ЭТОТ ШАГ НЕОБХОДИМ)
       - name: Set up OCaml
         uses: ocaml/setup-ocaml@v2
         with:
+          # Укажите вашу версию компилятора
           ocaml-compiler: "4.14.0"
 
-      - name: Install linters
-        run: opam install ocaml-lsp-server odoc-parser
+      # Шаг 3: Теперь можно устанавливать зависимости
+      - name: Install dependencies
+        run: opam install . --deps-only --with-test # или любая другая команда opam
 
+      # Шаг 4: Запуск линтеров
       - name: Lint opam files
         uses: ocaml/setup-ocaml/lint-opam@v2
 
