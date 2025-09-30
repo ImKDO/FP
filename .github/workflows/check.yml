@@ -40,7 +40,7 @@ jobs:
         run: opam exec -- dune runtest
         working-directory: ./Lab1/${{ matrix.task }}
         env:
-          OCAMLRUNPARAM: "l=16M"
+          OCAMLRUNPARAM: "l=64M"
 
       - name: Generate documentation
         # Генерируем документацию
