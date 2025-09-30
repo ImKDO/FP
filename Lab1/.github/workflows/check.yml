@@ -24,11 +24,13 @@ jobs:
         uses: ocaml/setup-ocaml@v2
         with:
           ocaml-compiler: ${{ matrix.ocaml-version }}
+          dune-cache: true
 
       - name: Install dependencies
-        run: |
-          opam install . --deps-only --with-test
-          opam install ocamlformat ocaml-lsp-server
+        run: opam install . --deps-only --with-test
+
+      - name: Install dev tools
+        run: opam install ocamlformat ocaml-lsp-server
 
       - name: Build
         run: opam exec -- dune build
@@ -39,23 +41,5 @@ jobs:
       - name: Check formatting
         run: opam exec -- dune build @fmt
 
-      - name: Run linter
+      - name: Lint
         run: opam exec -- dune build @lint
-
-  format-check:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Setup OCaml
-        uses: ocaml/setup-ocaml@v2
-        with:
-          ocaml-compiler: 5.1.x
-
-      - name: Install ocamlformat
-        run: opam install ocamlformat
-
-      - name: Check code formatting
-        run: opam exec -- dune build @fmt --auto-promote || (echo "Code is not formatted. Run 'dune build @fmt --auto-promote' locally" && exit 1)
