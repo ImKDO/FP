@@ -1,41 +1,74 @@
-name: Main workflow
+name: OCaml CI for Lab1 Projects
 
-on: push
+# Запускать рабочий процесс при push или pull request в main,
+# но только если изменения коснулись директории Lab1
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'Lab1/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'Lab1/**'
 
 jobs:
-  Tests:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
-        ocaml:
-          - ocaml-base-compiler.5.0.0~alpha0
-          - 4.14.0
-        include:
-          - { os: ubuntu-latest, ocaml: 4.13.1 }
-          - { os: ubuntu-latest, ocaml: 4.12.1 }
-          - { os: ubuntu-latest, ocaml: 4.11.2 }
-        exclude:
-          - { os: windows-latest, ocaml: ocaml-base-compiler.5.0.0~alpha0 }
+  build-and-test:
+    # Имя задачи будет динамически включать имя проекта, например "CI for Task14"
+    name: CI for ${{ matrix.project }}
+    runs-on: ubuntu-latest
 
-    runs-on: ${{ matrix.os }}
+    # Определяем матрицу для запуска задач
+    strategy:
+      fail-fast: false # Не отменять другие задачи в матрице, если одна упала
+      matrix:
+        # Укажите здесь имена директорий ваших проектов
+        project: [ 'Task14', 'Task16' ]
+
+    # Устанавливаем рабочую директорию по умолчанию для всех шагов 'run'
+    # Команды будут выполняться из Lab1/Task14 и Lab1/Task16 соответственно
+    defaults:
+      run:
+        working-directory: Lab1/${{ matrix.project }}
 
     steps:
+      # 1. Клонируем репозиторий
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Setup OCaml ${{ matrix.ocaml }}
+      # 2. Настраиваем OCaml
+      - name: Set up OCaml
         uses: ocaml/setup-ocaml@v2
         with:
-          cache-prefix: v1-${{ matrix.os }}-${{ matrix.ocaml }}
-          dune-cache: true
-          ocaml-compiler: ${{ matrix.ocaml }}
+          # Укажите нужную версию компилятора
+          ocaml-compiler: '4.14.0'
 
-      - name: Build dependencies
+      # 3. Устанавливаем зависимости (команда запустится в папке проекта)
+      - name: Install dependencies
         run: opam install . --deps-only --with-test
 
-      - name: Build library
+      # 4. Проверяем форматирование
+      - name: Check formatting
+        run: |
+          opam install ocamlformat
+          opam exec -- ocamlformat --check .
+
+      # 5. Собираем проект
+      - name: Build project
         run: opam exec -- dune build
 
-      - name: Run test suite
+      # 6. Запускаем тесты
+      - name: Run tests
         run: opam exec -- dune runtest
+
+      # 7. Линтинг opam-файлов (здесь нужно явно указать путь)
+      - name: Lint opam files
+        uses: ocaml/setup-ocaml/lint-opam@v2
+        with:
+            path: Lab1/${{ matrix.project }}
+
+      # 8. Линтинг документации
+      - name: Lint documentation
+        uses: ocaml/setup-ocaml/lint-doc@v2
+        with:
+            path: Lab1/${{ matrix.project }}
