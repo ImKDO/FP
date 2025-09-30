@@ -15,6 +15,7 @@ depends: [
   "fmt"
   "alcotest"
   "ocamlformat"
+  "zarith"
   "odoc" 
 ]
 build: [
