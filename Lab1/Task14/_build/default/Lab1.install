@@ -6,6 +6,3 @@ lib: [
 bin: [
   "_build/install/default/bin/Lab1.exe"
 ]
-doc: [
-  "_build/install/default/doc/Lab1/README.md"
-]

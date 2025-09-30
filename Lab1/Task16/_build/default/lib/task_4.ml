@@ -15,5 +15,4 @@ let sum_digits n =
   List.iter (fun d -> s := Stdlib.( + ) !s d) digits;
   !s
 
-let ans =
-  sum_digits (Z.pow (Z.of_int 2) 1000)
+let ans = sum_digits (Z.pow (Z.of_int 2) 1000)

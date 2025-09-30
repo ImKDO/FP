@@ -1,2 +1,4 @@
 (test
- (name test_Task16))
+ (name test_Task16)
+ (libraries lab1 alcotest)
+)

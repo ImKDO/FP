@@ -7,8 +7,5 @@ let digits_of_z n =
   in
   aux n
 
-let sum_digits n =
-  digits_of_z n |> Seq.fold_left Stdlib.( + ) 0
-
-let ans =
-  sum_digits (Z.pow (Z.of_int 2) 1000)
+let sum_digits n = digits_of_z n |> Seq.fold_left Stdlib.( + ) 0
+let ans = sum_digits (Z.pow (Z.of_int 2) 1000)

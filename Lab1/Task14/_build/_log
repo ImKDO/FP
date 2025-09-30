@@ -1,0 +1,6 @@
+### Starting build.
+# Target: 'C:\Users\KDO\AppData\Local\opam\default\bin/ocamlc.opt' -config, tags: {  }
+'C:\Users\KDO\AppData\Local\opam\default\bin/ocamlc.opt' -config
+# Target: 'C:\Users\KDO\AppData\Local\opam\default\bin/ocamlopt.opt' -config, tags: {  }
+'C:\Users\KDO\AppData\Local\opam\default\bin/ocamlopt.opt' -config
+# Compilation unsuccessful.
