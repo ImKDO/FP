@@ -1,12 +1,61 @@
-name: Check
-on: push
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
 jobs:
-  lint:
+  build-and-test:
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        ocaml-version:
+          - 4.14.x
+          - 5.1.x
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v5.0.0
-      - name: Install deps
-        run: opam install ci
-      - name: Lint
-        run: opam exec -- run lint
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup OCaml
+        uses: ocaml/setup-ocaml@v2
+        with:
+          ocaml-compiler: ${{ matrix.ocaml-version }}
+
+      - name: Install dependencies
+        run: |
+          opam install . --deps-only --with-test
+          opam install ocamlformat ocaml-lsp-server
+
+      - name: Build
+        run: opam exec -- dune build
+
+      - name: Run tests
+        run: opam exec -- dune runtest
+
+      - name: Check formatting
+        run: opam exec -- dune build @fmt
+
+      - name: Run linter
+        run: opam exec -- dune build @lint
+
+  format-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup OCaml
+        uses: ocaml/setup-ocaml@v2
+        with:
+          ocaml-compiler: 5.1.x
+
+      - name: Install ocamlformat
+        run: opam install ocamlformat
+
+      - name: Check code formatting
+        run: opam exec -- dune build @fmt --auto-promote || (echo "Code is not formatted. Run 'dune build @fmt --auto-promote' locally" && exit 1)
