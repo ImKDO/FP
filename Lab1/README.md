@@ -7,233 +7,6 @@
 
 ## Описание проблемы
 
-**Problem 16: Power Digit Sum**
-
-Задача из проекта Эйлера: найти сумму цифр числа 2^1000.
-
-> 2^15 = 32768 и сумма его цифр равна 3 + 2 + 7 + 6 + 8 = 26.  
-> Какова сумма цифр числа 2^1000?
-
-**Правильный ответ:** 1366
-
----
-
-## Ключевые элементы реализации
-
-### 1. Монолитная реализация с хвостовой рекурсией (task_1.ml)
-
-```ocaml
-let result exp =
-  let rec power = function
-    | 0 -> [1]
-    | n ->
-        let prev = power (n - 1) in
-        let rec multiply_by_two lst carry acc =
-          match lst with
-          | [] -> if carry = 0 then List.rev acc else List.rev (carry :: acc)
-          | x :: xs ->
-              let prod = x * 2 + carry in
-              multiply_by_two xs (prod / 10) ((prod mod 10) :: acc)
-        in
-        multiply_by_two prev 0 []
-  in
-  let result = power exp in
-  let rec sum_digits lst acc =
-    match lst with
-    | [] -> acc
-    | x :: xs -> sum_digits xs (acc + x)
-  in
-  sum_digits result 0
-let ans = result 1000
-```
-
-**Особенности:**
-
-- Использует собственную реализацию больших чисел через списки
-- Оптимизирована для предотвращения переполнения стека
-- Накопитель передается как параметр
-
-### 2. Монолитная реализация с обычной рекурсией (task_2.ml)
-
-```ocaml
-module Digits = struct
-  let of_z (n : Z.t) : int Seq.t =
-    Z.to_string n
-    |> String.to_seq
-    |> Seq.map (fun ch -> int_of_char ch - int_of_char '0')
-end
-
-module Filter = struct
-  let positive seq =
-    Seq.filter (fun d -> d > 0) seq
-end
-
-module Reduce = struct
-  let sum seq =
-    Seq.fold_left Stdlib.( + ) 0 seq
-end
-
-let ans =
-  let n = Z.pow (Z.of_int 2) 1000 in
-  n
-  |> Digits.of_z
-  |> Filter.positive
-  |> Reduce.sum
-```
-
-**Особенности:**
-
-- Классическая рекурсивная реализация
-- Менее эффективна по памяти для больших значений
-- Простота понимания и реализации
-
-### 3. Модульная реализация с map (task_3.ml)
-
-```ocaml
-let sum_digits n =
-  let s = Z.to_string n in
-  s
-  |> String.to_seq
-  |> Seq.map (fun ch -> int_of_char ch - int_of_char '0')
-  |> Seq.fold_left Stdlib.( + ) 0
-
-let ans =
-  sum_digits (Z.pow (Z.of_int 2) 1000)
-```
-
-**Особенности:**
-
-- Четкое разделение ответственности между модулями
-- Использование стандартных функций высшего порядка
-- Легко тестируемые компоненты
-
-### 4. Реализация с циклами
-
-```ocaml
-let digits_of_z n =
-  let rec aux m acc =
-    if Z.equal m Z.zero then acc
-    else
-      let q, r = Z.ediv_rem m (Z.of_int 10) in
-      aux q (Z.to_int r :: acc)
-  in
-  aux n []
-
-let sum_digits n =
-  let s = ref 0 in
-  let digits = digits_of_z n in
-  List.iter (fun d -> s := Stdlib.( + ) !s d) digits;
-  !s
-
-let ans =
-  sum_digits (Z.pow (Z.of_int 2) 1000)
-```
-
-**Особенности:**
-
-- Использует map для преобразования последовательностей
-- Демонстрирует функциональный подход к генерации данных
-- Комбинирует map с fold для получения результата
-
-### 5. Реализация с бесконечными циклами (task_5.ml)
-
-```ocaml
-let digits_of_z n =
-  let rec aux m () =
-    if Z.equal m Z.zero then Seq.Nil
-    else
-      let q, r = Z.ediv_rem m (Z.of_int 10) in
-      Seq.Cons (Z.to_int r, aux q)
-  in
-  aux n
-
-let sum_digits n =
-  digits_of_z n |> Seq.fold_left Stdlib.( + ) 0
-
-let ans =
-  sum_digits (Z.pow (Z.of_int 2) 1000)
-```
-
-**Особенности:**
-
-- Использует мутабельные ссылки (ref)
-- Императивные конструкции for/while
-- Ближе к традиционному программированию
-
-### 6. Реализация на Python (alg.py)
-
-```python
-def power_digit_sum_functional(base, exp):
-    return sum(map(int, str(base ** exp)))
-
-def power_digit_sum_with_generators(base, exp):
-    def digit_generator(number):
-        for char in str(number):
-            yield int(char)
-
-    power_result = base ** exp
-    digits = digit_generator(power_result)
-    return sum(accumulating_sum_generator(digits))
-
-def infinite_powers(base):
-    power = 1
-    while True:
-        yield power
-        power *= base
-```
-
----
-
-## Результаты выполнения
-
-### OCaml реализации:
-
-```
-Result 1 (tail recursion): 1366
-Result 2 (regular recursion): 1366
-Result 3 (modular with fold/filter): 1366
-Result 4 (with map): 1366
-Result 5 (with loops): 1366
-```
-
-### Python реализации:
-
-```
-Result 6: 1366
-```
-
----
-
-## Выводы
-
-### Анализ использованных приемов программирования
-
-#### **1. Хвостовая рекурсия vs Обычная рекурсия**
-
-- **Хвостовая рекурсия** эффективнее по памяти, особенно для больших вычислений
-- **Обычная рекурсия** проще для понимания, но может вызвать переполнение стека
-
-#### **2. Модульность и разделение ответственности**
-
-- Модульный подход значительно улучшает читаемость кода
-- Каждый модуль решает конкретную задачу (генерация, фильтрация, свертка)
-- Легко тестировать и модифицировать отдельные компоненты
-
-#### **3. Функциональные преобразования**
-
-- `map` позволяет элегантно преобразовывать данные
-- Комбинирование `map`, `fold` и `filter` дает мощные возможности обработки
-- Функциональный стиль уменьшает количество ошибок
-
-#### **4. Императивные конструкции в функциональном языке**
-
-- OCaml поддерживает императивный стиль через `ref`, циклы
-- Полезно для алгоритмов, естественно выражаемых циклами
-
----
-
-## Описание проблемы
-
 **Problem 14: Longest Collatz Sequence**
 
 Задача из проекта Эйлера: найти число меньше одного миллиона, которое производит самую длинную последовательность Коллатца.
@@ -471,3 +244,231 @@ Result 5: 837799
 - Бесконечные потоки позволяют работать с любыми диапазонами
 - Pipe операторы (`|>`) улучшают читаемость кода
 - Демонстрируют мощь функционального подхода
+
+## Описание проблемы
+
+**Problem 16: Power Digit Sum**
+
+Задача из проекта Эйлера: найти сумму цифр числа 2^1000.
+
+> 2^15 = 32768 и сумма его цифр равна 3 + 2 + 7 + 6 + 8 = 26.  
+> Какова сумма цифр числа 2^1000?
+
+**Правильный ответ:** 1366
+
+---
+
+## Ключевые элементы реализации
+
+### 1. Монолитная реализация с хвостовой рекурсией (task_1.ml)
+
+```ocaml
+let result exp =
+  let rec power = function
+    | 0 -> [1]
+    | n ->
+        let prev = power (n - 1) in
+        let rec multiply_by_two lst carry acc =
+          match lst with
+          | [] -> if carry = 0 then List.rev acc else List.rev (carry :: acc)
+          | x :: xs ->
+              let prod = x * 2 + carry in
+              multiply_by_two xs (prod / 10) ((prod mod 10) :: acc)
+        in
+        multiply_by_two prev 0 []
+  in
+  let result = power exp in
+  let rec sum_digits lst acc =
+    match lst with
+    | [] -> acc
+    | x :: xs -> sum_digits xs (acc + x)
+  in
+  sum_digits result 0
+let ans = result 1000
+```
+
+**Особенности:**
+
+- Использует собственную реализацию больших чисел через списки
+- Оптимизирована для предотвращения переполнения стека
+- Накопитель передается как параметр
+
+### 2. Монолитная реализация с обычной рекурсией (task_2.ml)
+
+```ocaml
+module Digits = struct
+  let of_z (n : Z.t) : int Seq.t =
+    Z.to_string n
+    |> String.to_seq
+    |> Seq.map (fun ch -> int_of_char ch - int_of_char '0')
+end
+
+module Filter = struct
+  let positive seq =
+    Seq.filter (fun d -> d > 0) seq
+end
+
+module Reduce = struct
+  let sum seq =
+    Seq.fold_left Stdlib.( + ) 0 seq
+end
+
+let ans =
+  let n = Z.pow (Z.of_int 2) 1000 in
+  n
+  |> Digits.of_z
+  |> Filter.positive
+  |> Reduce.sum
+```
+
+**Особенности:**
+
+- Классическая рекурсивная реализация
+- Менее эффективна по памяти для больших значений
+- Простота понимания и реализации
+
+### 3. Модульная реализация с map (task_3.ml)
+
+```ocaml
+let sum_digits n =
+  let s = Z.to_string n in
+  s
+  |> String.to_seq
+  |> Seq.map (fun ch -> int_of_char ch - int_of_char '0')
+  |> Seq.fold_left Stdlib.( + ) 0
+
+let ans =
+  sum_digits (Z.pow (Z.of_int 2) 1000)
+```
+
+**Особенности:**
+
+- Четкое разделение ответственности между модулями
+- Использование стандартных функций высшего порядка
+- Легко тестируемые компоненты
+
+### 4. Реализация с циклами
+
+```ocaml
+let digits_of_z n =
+  let rec aux m acc =
+    if Z.equal m Z.zero then acc
+    else
+      let q, r = Z.ediv_rem m (Z.of_int 10) in
+      aux q (Z.to_int r :: acc)
+  in
+  aux n []
+
+let sum_digits n =
+  let s = ref 0 in
+  let digits = digits_of_z n in
+  List.iter (fun d -> s := Stdlib.( + ) !s d) digits;
+  !s
+
+let ans =
+  sum_digits (Z.pow (Z.of_int 2) 1000)
+```
+
+**Особенности:**
+
+- Использует map для преобразования последовательностей
+- Демонстрирует функциональный подход к генерации данных
+- Комбинирует map с fold для получения результата
+
+### 5. Реализация с бесконечными циклами (task_5.ml)
+
+```ocaml
+let digits_of_z n =
+  let rec aux m () =
+    if Z.equal m Z.zero then Seq.Nil
+    else
+      let q, r = Z.ediv_rem m (Z.of_int 10) in
+      Seq.Cons (Z.to_int r, aux q)
+  in
+  aux n
+
+let sum_digits n =
+  digits_of_z n |> Seq.fold_left Stdlib.( + ) 0
+
+let ans =
+  sum_digits (Z.pow (Z.of_int 2) 1000)
+```
+
+**Особенности:**
+
+- Использует мутабельные ссылки (ref)
+- Императивные конструкции for/while
+- Ближе к традиционному программированию
+
+### 6. Реализация на Python (alg.py)
+
+```python
+def power_digit_sum_functional(base, exp):
+    return sum(map(int, str(base ** exp)))
+
+def power_digit_sum_with_generators(base, exp):
+    def digit_generator(number):
+        for char in str(number):
+            yield int(char)
+
+    power_result = base ** exp
+    digits = digit_generator(power_result)
+    return sum(accumulating_sum_generator(digits))
+
+def infinite_powers(base):
+    power = 1
+    while True:
+        yield power
+        power *= base
+```
+
+---
+
+## Результаты выполнения
+
+### OCaml реализации:
+
+```
+Result 1 (tail recursion): 1366
+Result 2 (regular recursion): 1366
+Result 3 (modular with fold/filter): 1366
+Result 4 (with map): 1366
+Result 5 (with loops): 1366
+```
+
+### Python реализации:
+
+```
+Result 6: 1366
+```
+
+---
+
+## Выводы
+
+### Анализ использованных приемов программирования
+
+#### **1. Хвостовая рекурсия vs Обычная рекурсия**
+
+- **Хвостовая рекурсия** эффективнее по памяти, особенно для больших вычислений
+- **Обычная рекурсия** проще для понимания, но может вызвать переполнение стека
+
+#### **2. Модульность и разделение ответственности**
+
+- Модульный подход значительно улучшает читаемость кода
+- Каждый модуль решает конкретную задачу (генерация, фильтрация, свертка)
+- Легко тестировать и модифицировать отдельные компоненты
+
+#### **3. Функциональные преобразования**
+
+- `map` позволяет элегантно преобразовывать данные
+- Комбинирование `map`, `fold` и `filter` дает мощные возможности обработки
+- Функциональный стиль уменьшает количество ошибок
+
+#### **4. Императивные конструкции в функциональном языке**
+
+- OCaml поддерживает императивный стиль через `ref`, циклы
+- Полезно для алгоритмов, естественно выражаемых циклами
+
+---
+
