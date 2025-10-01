@@ -40,7 +40,7 @@ jobs:
         run: ulimit -s unlimited
 
       - name: Run tests
-        run: opam exec -- dune runtest
+        run: opam exec -- dune run
         working-directory: ./Lab1/${{ matrix.task }}
 
       - name: Generate documentation
